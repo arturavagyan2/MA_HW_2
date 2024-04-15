@@ -81,10 +81,10 @@ class Bandit(ABC):
         with open(filename, mode=mode, newline='') as file:
             writer = csv.writer(file)
             if header:
-                writer.writerow(['Algorithm', 'Bandit', 'Reward'])
+                writer.writerow(['Bandit', 'Reward', 'Algorithm'])
 
             for reward in self.rewards:
-                writer.writerow([algorithm_name, self.p, reward])
+                writer.writerow([self.p, reward, algorithm_name])
         logger.info(f'Rewards data for {algorithm_name} bandit (p={self.p}) has been stored in {filename}.')
 
 
@@ -272,39 +272,24 @@ if __name__=='__main__':
    
     bandit_rewards = [1, 2, 3, 4]
     num_trials = 20000
-    initial_epsilon = 0.1  # Set initial epsilon value
+    initial_epsilon = 0.1  
 
-    # Instantiate Epsilon Greedy bandits with initial epsilon value
     epsilon_greedy_bandits = [EpsilonGreedy(reward, initial_epsilon) for reward in bandit_rewards]
 
-    # Instantiate Thompson Sampling bandits
     thompson_bandits = [ThompsonSampling(reward) for reward in bandit_rewards]
 
-    # Perform experiments for both Epsilon Greedy and Thompson Sampling bandits
     for bandit_type in [epsilon_greedy_bandits, thompson_bandits]:
         for bandit in bandit_type:
             bandit.experiment(num_trials)
             bandit.report(bandit.__class__.__name__)
 
-    # Instantiate Visualization object
     visualization = Visualization()
-
-    # Plot the performance of Epsilon Greedy bandits
     visualization.plot_epsilon_greedy(epsilon_greedy_bandits, num_trials, 'Epsilon Greedy')
-
-    # Plot the performance of Thompson Sampling bandits
     visualization.plot_thompson_sampling(thompson_bandits, num_trials, 'Thompson Sampling')
-
-    # Plot the learning process of Epsilon Greedy bandits
     visualization.plot_learning_process(epsilon_greedy_bandits, num_trials, 'Learning Process: Epsilon Greedy')
-
-    # Plot the learning process of Thompson Sampling bandits
     visualization.plot_learning_process(thompson_bandits, num_trials, 'Learning Process: Thompson Sampling')
-
-    # Plot cumulative rewards for both Epsilon Greedy and Thompson Sampling bandits
     visualization.plot_cumulative_rewards(epsilon_greedy_bandits, thompson_bandits, num_trials)
 
-    # Perform experiments for both Epsilon Greedy and Thompson Sampling bandits
     for bandit_type in [epsilon_greedy_bandits, thompson_bandits]:
         for bandit in bandit_type:
             bandit.experiment(num_trials)
@@ -313,5 +298,5 @@ if __name__=='__main__':
             bandit.print_cumulative_reward()
             bandit.store_rewards_to_csv(bandit.__class__.__name__)
 
-# Comparison of cumulative regret
+# Comparison of cumulative regrets
 compare_cumulative_regret(epsilon_greedy_bandits, thompson_bandits, num_trials)
